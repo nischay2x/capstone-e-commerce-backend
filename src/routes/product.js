@@ -8,6 +8,7 @@ import multerUpload, { multerErrorHandler } from "../middleware/multerUpload.js"
 const productRouter = Router();
 
 productRouter.get("/", justDecodeTokenIfExist, getProducts);
+productRouter.get("/:id", getProductById);
 productRouter.get("/search", search);
 
 productRouter.use(validateToken);
@@ -26,7 +27,6 @@ productRouter.post("/", validateSeller, (req, res, next) => {
     });
 }, validateCreateProduct, addProduct);
 productRouter.get("/seller", getProductsBySeller);
-productRouter.get("/:id", getProductById);
 productRouter.delete("/:id", validateSeller, deleteProduct);
 productRouter.put("/:id", validateSeller, (req, res, next) => {
     single(req, res, (err) => {
