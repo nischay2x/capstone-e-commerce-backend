@@ -127,7 +127,7 @@ function getRandomCategories(arr, count) {
     return categories;
 }
 export async function getProducts(req, res) {
-    const userId = req.user.id;
+    const userId = req.user?.id;
 
     try {
         let previosOrderItemIds = [];
