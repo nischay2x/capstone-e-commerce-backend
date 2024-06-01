@@ -1,0 +1,121 @@
+datasource db {
+ provider = "postgresql"
+ url      = env("DATABASE_URL")
+}
+
+generator client {
+ provider = "prisma-client-js"
+ previewFeatures = ["fullTextSearch"]
+}
+
+enum Role {
+  USER
+  SELLER
+  ADMIN
+}
+
+model EmailOtp {
+  email  String  @id
+  otp    String
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(USER)
+  image     String?
+
+  cartId Int? @unique
+  cart Cart? @relation(fields: [cartId], references: [id])
+
+  products Product[] // only for SELLERS
+
+  orders     Order[] @relation("userOrder") // only for USER
+  sellerOrders Order[] @relation("sellerOrder")
+  verified  Boolean @default(false)
+
+  suspended   Boolean   @default(false)
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  items     CartItem[]
+
+  user      User? 
+}
+
+model CartItem {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+
+  cartId Int
+  cart Cart @relation(fields: [cartId], references: [id])
+
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+enum ProductState {
+  ACTIVE
+  DELETED
+}
+model Product {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  image       String
+  name        String
+  description String
+  price       Float
+  category    String
+
+  sellerId    Int
+  seller      User     @relation(fields: [sellerId], references: [id])
+
+  state       ProductState @default(ACTIVE)
+  cartItems CartItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+  CARD 
+  ONLINE
+}
+
+model Order {
+  id             Int      @id @default(autoincrement())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+ 
+  user           User     @relation("userOrder", fields: [userId], references: [id])
+  userId         Int
+ 
+  items         String
+
+  address        String
+  phoneNumber    String
+  paymentMode    PaymentMode @default(CASH)
+  netBilledAmount Float
+
+  status      OrderStatus @default(PENDING)
+
+  sellerId Int
+  seller User @relation("sellerOrder", fields: [sellerId], references: [id])
+}
