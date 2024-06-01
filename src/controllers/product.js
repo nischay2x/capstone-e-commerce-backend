@@ -246,8 +246,8 @@ export async function updateProduct(req, res) {
 export async function getProductById(req, res) {
     const id  = parseInt(req.params.id);
     
-    const sellerId = req.user.id;
-    const role = req.user.role;
+    const sellerId = req.user?.id;
+    const role = req.user?.role;
 
     const recommend = req.query.recommend;
 
