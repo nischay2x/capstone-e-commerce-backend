@@ -56,7 +56,7 @@ export async function addProduct(req, res) {
 }
 
 export async function getProductsBySeller(req, res) {
-    const sellerId = req.user.id;
+    const sellerId = parseInt(req.user.id);
 
     const query = req.query.query;
     const category = req.query.category;
@@ -244,6 +244,11 @@ export async function updateProduct(req, res) {
 }
 
 export async function getProductById(req, res) {
+
+    if(req.params.id === "seller"){
+        return getProductsBySeller(req, res)
+    }
+
     const id  = parseInt(req.params.id);
     
     const sellerId = req.user?.id;
