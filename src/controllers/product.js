@@ -249,6 +249,10 @@ export async function getProductById(req, res) {
         return getProductsBySeller(req, res)
     }
 
+    if (req.params.id === "search") {
+        return search(req, res);
+    }
+
     const id  = parseInt(req.params.id);
     
     const sellerId = req.user?.id;
