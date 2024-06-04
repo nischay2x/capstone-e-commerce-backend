@@ -5,7 +5,7 @@ export function validateCreateProduct(req, res, next) {
         name: Joi.string().required().min(2).max(100),
         description: Joi.string().max(200),
         price: Joi.number().min(0).default(0),
-        
+        category: Joi.string().optional().allow(""),
     }).validate(req.body);
 
     if (error) {
